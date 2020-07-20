@@ -17,7 +17,9 @@ int a=10;
 byte b =a;
 ```
 
-명시적 type casting이 필요하다. 이때, 큰 type 에서 작은 type 으로 변수를 할당한다면 값의 손실이 일어날 수 있다. **큰 type <- 작은type** : 자동 형변환 **작은 type <- 큰type**: 오류, 명시적 형변환(type casting)이 필요
+명시적 type casting이 필요하다. 이때, 큰 type 에서 작은 type 으로 변수를 할당한다면 값의 손실이 일어날 수 있다.  
+**큰 type <- 작은type** : 자동 형변환  
+**작은 type <- 큰type**: 오류, 명시적 형변환(type casting)이 필요
 
 
 ### 4. 자바 byte 메모리가 다음과 같다 했을때 해당되는 숫자는?  

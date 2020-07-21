@@ -86,3 +86,25 @@ System.out.println(str);
 
 **상수 리터럴 타입을 선언하면 처음에 힙공간에 할당되고 나중에 또 사용되면
 같은 주소값을 가지기때문에 성능에 유리할 수 도 있다** 
+
+### 12. String 변수 값의 할당에 대한 이야기
+JAVA에서 String형에 만약 "aaa"라는 문자열을 할당했다면 우선 힙에 만들어진 String constant pool(문자열 사전?해시테이블? 같은 거라고 생각하면 될것같다) 에서 찾아보고, 이 값이 없다면 pool에 새로 할당한다. 그다음 선언된 변수의 value가 constant pool에서 "aaa"라는 문자열을 가지는
+는 주소값을 가르키게 된다.  
+
+내부적으로 String 클래스의 구현을 살펴보면 intern() 이라는 메소드를 이용해 pool 을 살펴보는 과정이 구현되어있다.
+
+그래서 아래와 같은 코드에서 String 객체간의 값을 == 연산을 통해 주소값을 비교하는데도 true라는 결과를 받아볼수 있는것이다. (pool 에서 해당하는 주소값이 같기 때문에)
+
+
+```java
+String a = "aaa";
+String b = "aaa";
+if (a == b) {
+    System.out.println("true");
+} else {
+    System.out.println("false");
+}
+
+True
+```
+

@@ -1,4 +1,4 @@
- # Study - Day 1
+ # Study - 알쓸신잡
 
 ### 1 . boolean, byte,short, int, long, float, double, char 등등의 java primitive type들은 값의 범위가 정해져있다. 그렇다면 메모리를 효율적으로 사용하기 위해 size에 맞는 primitive type을 고민하여 써야할까? ex) -2~2 정수를 저장하기위해 byte형을 사용 해야하나?
 
@@ -79,3 +79,10 @@ else{
 }
 System.out.println(str);
 ```
+
+### 11. 힙과 스택
+코드에서 선언되어진 local variable은 스택에 저장된다. 이때, 명시적으로 값이 지정된(ex.상수 리터럴) Value type 이라면 값을 직접 가지고있고, 만약 가변적인 값이라면(new Array) Reference type이라 하고 가변적인 메모리공간을 가지는
+힙이라는 공간에 값을 할당하고, 그 힙 공간의 주소값을 가지고있는다.
+
+**상수 리터럴 타입을 선언하면 처음에 힙공간에 할당되고 나중에 또 사용되면
+같은 주소값을 가지기때문에 성능에 유리할 수 도 있다** 

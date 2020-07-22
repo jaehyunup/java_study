@@ -108,3 +108,4 @@ if (a == b) {
 True
 ```
 
+### 13. reference type은 4byte의 공간을 할당받는다.

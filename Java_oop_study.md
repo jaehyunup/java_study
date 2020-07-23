@@ -45,3 +45,41 @@ Class를 만들기 전에, Class만의 정적인 특성과 동적인 특성을 �
 
 즉, 시스템의 의도나 목적에 따라 같은 현실객체를 정의한 클래스라도 다른형태로 나타날 수 있습니다.
 그러니 이런 현실세계의 Object를 Class로 도출하는 과정이 아주 중요 하다고 볼 수 있겠습니다.
+
+
+### 4. 아스날
+
+
+### 5. 클래스 한눈에 알아보기
+```java
+public class Phone {
+    public String name;
+    public char color;
+    public int price;
+    public static double SWversion;
+
+    public int getRealDebt(){ 
+        return 10000;
+    }
+    public phone(){
+        this.name="galaxy";
+        this.color="black";
+        this.price="1000";
+        this.SWversion="1.0";
+    }
+}
+```
+휴대폰이라는 클래스는 이름, 색깔, 가격 그리고 SW 버전이라는 attribute를 가지고 있습니다. 그리고 getRealDebt라는 메소드도 가지고 있죠.  
+**이중 static이 함께 선언된 SWversion** 은 무슨 의미일까요? 이를 알기위해서는 메모리 저장 영역에 대한 이야기가 필요합니다.
+
+## - 메모리에는 어떻게 저장될까?
+![메모리](./instance_memory.png)
+
+나는 이렇게 저장될것이라고 이해했다.
+그렇다. Static으로 선언된 인스턴스는, method area라는 공용 메모리 공간에 저장되고, 다른 곳에서도 이 인스턴스에 접근이 가능하다.
+>***인스턴스는 어떤 원본(추상적인 개념)으로부터 ‘생성된 복제본’을 의미합니다.***
+
+이를 활용한것이 싱글턴 패턴이라고 생각했다면 이미 당신은 실력자.
+
+클래스를 메모리에 올리기위해 new를 한다면 이 클래스는 소프트웨어적으로 인스턴스화 되었다고 볼 수 있고, new를 할때마다 힙에 각각의 메모리 공간을 할당받는다. 
+**메모리 구조가 이렇게 되어있기 때문에 같은 클래스에서 생성된 인스턴스라도 값이 다를수 있다는 말이다.**

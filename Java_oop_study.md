@@ -79,7 +79,101 @@ public class Phone {
 그렇다. Static으로 선언된 인스턴스는, method area라는 공용 메모리 공간에 저장되고, 다른 곳에서도 이 인스턴스에 접근이 가능하다.
 >***인스턴스는 어떤 원본(추상적인 개념)으로부터 ‘생성된 복제본’을 의미합니다.***
 
-이를 활용한것이 싱글턴 패턴이라고 생각했다면 이미 당신은 실력자.
-
 클래스를 메모리에 올리기위해 new를 한다면 이 클래스는 소프트웨어적으로 인스턴스화 되었다고 볼 수 있고, new를 할때마다 힙에 각각의 메모리 공간을 할당받는다. 
 **메모리 구조가 이렇게 되어있기 때문에 같은 클래스에서 생성된 인스턴스라도 값이 다를수 있다는 말이다.**
+
+
+
+### 6. 배열을 array List처럼 자연스럽게 늘리는방법
+java에서 배열은 메모리의 순서로 지정된 공간을 칭하고 index를 통해 메모리에 접근한다고 알려져있다. 하지만 이런 순차자료구조는 배열의 변경이나 삭제등에서 나타나는 오버헤드나 여타 다른 성능적인 불리함을 가지고있다 더 많은 기능을 가진 클래스로 List 클래스가 존재한다. (ArrayList,LinkedList 등)
+
+ArrayList에서는  data 가 append 되었을때 메모리를 늘려주게 되는데.
+이것은 Arrays.copyOf() 메소드가 이용된다. 이것을 구현 해보자.
+
+ArrayList clone coding
+1. 값을 넣을 공간이 있는지 확인한다.
+2. 공간을 추가한 새로운 배열을 생성한다.
+3. 기존 배열의 내용을 새롭게 생성한 배열로 복사한다.
+4. 기존 배열을 가르키는 변수에 새로운 배열의 주소값을 입력한다.
+
+```java
+/*Movie 클래스*/
+public class Movie {
+    private String title;
+	private String director;
+	private int grade;
+}
+```
+
+```java
+/*영화를 담는 DAO 클래스인 MovieMgr*/
+public class MovieMgr {
+	private static MovieMgr INSTANCE;	
+	private MovieMgr(){		
+	}
+	public static MovieMgr getInstance() {
+		if(INSTANCE == null) {
+			INSTANCE=new MovieMgr();
+		}
+		return INSTANCE;
+	}
+	private Movie[] movies = new Movie[100];
+	// 데이터가 들어갈 위치와 입력된 데이터의 크기
+	
+	private int index;//
+	/** 파라메터로 전달된 화 정보를 전달받아 배열에 저장한다. */
+	public void add(Movie m) {		
+		movies[index]=m;
+		index++;
+		
+	}
+}
+```
+
+MovieMgr 클래스는 movie 클래스를 저장할수있는 클래스이다.
+내부적으로 배열을 가지고있고 add메서드를 실행할때 movies 배열에 movie 인스턴스를
+저장 할 수 있다. 
+
+
+```java
+public void add(Movie m) {
+		movies[index]=m;
+		index++;	
+	}
+```
+이렇게 만들어버린다면, index가 선언된 movies 배열의 크기이상으로 넘어갈때 error를 발생시킬것이다. 여기서 Arrays.copyOf() 메서드와 같이 구현을 한다면.
+
+```java
+public void add(Movie m) {	
+		//1 .체크
+		if (index == movies.length) {
+			// 2. 기존 배열의 2배로 새로운 배열 생성(임의의 값으로 더 큰새로운 배열을 생성해도 된다.)
+			Movie[] temp = new Movie[index*2]; //새로운 배열
+			// 3. 기존 배열의 내용을 새로 만들어질 더 큰 공간의 빈 배열로 복사한다.
+			for(int i=0; i<index*2 ;i++) {
+				temp[i]= movies[i]; 
+			}
+			// 4.새롭게 생성된 배열의 주소값을 기본 변수에 대입한다.
+			movies=temp;
+		}
+		movies[index]=m;
+		index++;
+	}
+```
+
+
+```java
+public void add(Movie m) {	
+		//1 .체크
+		if (index == movies.length) {
+			Arrays.copyOf(movies,index *2 );
+		}
+		movies[index]=m;
+		index++;
+	}
+```
+
+두개의 코드는 같은 결과를 얻을 수 있다.
+
+이 테스트는 우리가 자연스럽게 쓰고있던 것들도 누군가 구현한 것 이라는것을 더 실감하게 되는 테스트인것 같다.. 앞으로 api라고 맨날 모르고 쓰지말고 어떻게 만들어졌는지도 확인해보면서 써야겠습니다.
+

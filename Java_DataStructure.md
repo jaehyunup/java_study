@@ -90,3 +90,65 @@ System.out.println(queue.size()+"//"+queue.isEmpty());
 그렇기 때문에 이를 이용할 수 없게 제한 해야한다는 것입니다. 
 > 한줄요약 : Queue 를 만들었으면 Queue에 맞게끔 쓰기위해 Queue 인터페이스를 이용해야 올바른 코딩 방법이다.
 
+```java
+package com.ssafy.live03;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class myChu {
+	public static void main(String[] args) {
+		// 마이쮸 나눠주기 시뮬레이션
+//		1번이 한개의 마이쮸를 받는다
+//		1번이 다시 줄을 선다
+//		2번이 줄을 선다
+//		1번이 두개의 마이쮸를 받는다
+//		1번이 다시 줄을 선다
+//		3번이 들어와 줄을 선다
+//		2번이 한개의 마이쮸를 받는다
+//		2번이 다시 줄을 선다
+//		4번이 들어와 줄을 선다
+//		1번이 세개의 마이쮸를받는다
+//		1번이 다시줄을 선다
+//		5번이 줄을 선다
+//		3번이 한개의 마이쮸를 받는다
+//			.
+//			.
+//			.
+//		마이쮸가 20개있을때 마지막것을 누가 가져갈까?
+		int item=20;
+		int person=1;
+		Queue<int[]> queue=new LinkedList<int[]>();
+		queue.offer(new int[] {person,1});
+		while(item > 0) {
+			System.out.println(queue.toString());
+			if(!queue.isEmpty()){
+				int[] p=queue.poll();
+				int avaliableCnt= (item >= p[1] )?p[1]:item;
+				item -=avaliableCnt;
+				if(item==0) {
+					System.out.println("마지막 마이쭈 당첨자 : "+p[0]+"가져간개수: "+avaliableCnt);
+					break;
+				}else {
+					++p[1];
+					queue.offer(p);
+					queue.offer(new int[] {++person,1});
+				}
+			}
+		}
+		
+	}
+}
+
+```
+
+
+
+### 3.우선순위 큐 (Priority Queue)
+
+- 우선순위와 함께 원소들을 저장하는 큐
+- FIFO 순서가 아니라 우선순위가 높은 순서대로 먼저 나가게 된다.
+- Heap(Tree) 자료구조를 이용해 만들어짐
+  - 최대힙을 사용하냐,최소힙을 사용하냐에 따라 출력을 먼저 할 우선순위가 큰지 작은지 결정 해줄 수 있다.
+
+  

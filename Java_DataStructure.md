@@ -255,9 +255,39 @@ public class simpleLinkedListTest {
 그렇다면 이 LinkedList를 이용해서 노드의 가장 마지막값. 
 즉 tail 값만 빼올수 있다면 pop() 연산도 구현을 할 수 있습니다.
 
+> 이번 예제는 Siglic LinkedList를 간단히 구현해보았지만
+실제 LinkedList Class 는 doublic LinkedList로 구현이 되어있습니다.
+
+
+<br/>  
+
+## 트리
+![출처 https://wwst.tistory.com/2](tree.gif) 
+###### 출처 https://wwst.tistory.com/2 님의 글에서 옮겨왔습니다.
+
+위와 같은 형태의 자료구조를 트리라고 합니다. 
+
+여러가지 트리가있지만 가장 중요한건 이진 트리이니 그것을 다시한번 정리해보려합니다.
 
 
 
+### 이진트리의 종류
+![https://jiwondh.github.io/2017/10/15/tree/](binary_tree.png) 
+###### 출처 : https://jiwondh.github.io/2017/10/15/tree/
+
+위와같은 형태로, 루트노드에 2개이하의 자식을 가지고있는 트리를 이진트리라고 합니다. 트리의 종류는 포화이진트리 등 다양한 형태가 있겠습니다.
 
 
-### 이중 연결리스트 만들어보기
+
+#### 트리를 이용해보자
+
+트리를 이용하는데는 대표적으로 BFS,DFS가 있겠습니다. 
+
+bfs - 너비우선탐색  
+dfs - 깊이우선탐색  
+
+루트노드에서 자식노드까지 쭉 내려가서 깊이'우선'으로 탐색하는것이 dfs이고, bfs는 너비우선탐색, 즉 노드 및 형제노드를 모두 탐색하고, 다음 자식노드순으로 쭉 탐색해나가는 탐생 방식입니다. 
+
+bfs는 Queue로 구현을 할 수 있고  
+dfs는 Stack이나 재귀함수로 구현이 가능합니다. 
+

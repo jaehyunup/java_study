@@ -144,7 +144,7 @@ public class myChu {
 
 
 
-### 3.우선순위 큐 (Priority Queue)
+## 3.우선순위 큐 (Priority Queue)
 
 - 우선순위와 함께 원소들을 저장하는 큐
 - FIFO 순서가 아니라 우선순위가 높은 순서대로 먼저 나가게 된다.
@@ -152,3 +152,112 @@ public class myChu {
   - 최대힙을 사용하냐,최소힙을 사용하냐에 따라 출력을 먼저 할 우선순위가 큰지 작은지 결정 해줄 수 있다.
 
   
+
+
+## 4. 배열과 리스트
+
+### 순차리스트 (배열)  
+- 실제 메모리공간에 물리적으로 순차적으로 저장된 자료구조를 말한다.
+
+- 단순 배열을 이용해 순차리스트를 구현하는경우 삽입/삭제 과정에서 연산속적 메모리배열을 위한 원소이동 작업에 대한 오버헤드가 발생한다.
+
+- 삽입 /삭제에 일어나는 연산이 빈번하게 일어난다.
+
+
+### 연결리스트
+- 자료의 논리적 순서와 물리적 순서가 일치하지않고, 개별적으로 위치하는 원소의 레페런스를 연결한 구조를 이루는 자료구조
+
+- 링크를 통해 원소에 접근하기때문에, 물리적인 순서를 맞추기위한 작업이 필요하지 않고, 레퍼런스만 잘 조정해주면 된다.
+
+- 이를 이용하면 자료구조의 크기를 동적으로 조정할 수있어 메모리의 효율적 사용이 가능하다.
+
+#### 연결리스트의 기본구조
+연결리스트의 구성요소는 크게 노드/헤드 2가지가 있다.
+
+노드
+ 1) 데이터필드
+  - 원소의 값을 저장하는 자료구조
+  - 저장할 원소의 종류나 크기에 따라 구조를 정의하여 사용함
+ 2) 링크 필드(다음 노드와의 연결)
+  - 다음 노드의 주소를 저장하는 자료구조
+
+헤드
+ - 리스트의 첫 노드를 가리키는 레퍼런스.
+
+ 자세한 연결 구조는 링크필드에 의해 다음 노드와 연결되는 구조이며, 헤드가 가장 앞의 노드. 링크필드가 연속된 다음 노드들을 가르키는 형태로 아래와 같다.  
+
+#### 시각화  
+ ![linked_list_image](./linked_list.png)
+
+
+#### 연결리스트 만들어보기
+```java
+// 노드 구현 클래스
+public class Node {
+	public int data;
+	public Node link;
+	public Node(int data, Node node) {
+		this.data = data;
+		this.link = node;
+	}
+	public Node(int data) {
+		this.data = data;
+	}
+}
+```
+
+```java
+// LinkedList 구현
+public class simpleLinkedList {
+	public Node head;
+	
+	public void addFirstNode(int data) {
+		Node newNode=new Node(data,head);
+		head=newNode;
+	}
+
+	@Override
+	public String toString() {
+		return "simpleLinkedList [head=" + head + "]";
+	}
+	
+	public void printList() {
+		for(Node currNode=head;currNode!=null;currNode=currNode.link) {
+			System.out.print(currNode.data+" ");
+		}
+		System.out.println();
+	}
+	
+}
+```
+
+```java
+// 테스트케이스
+public class simpleLinkedListTest {
+	public static void main(String[] args) {
+		simpleLinkedList list = new simpleLinkedList();
+		
+		list.addFirstNode(1);
+		list.addFirstNode(2);
+		list.addFirstNode(3);
+		list.printList();
+	}
+}
+```
+```
+출력결과 : 3 2 1
+```
+
+위의 테스트케이스는 간단한 연결리스트 삽입 연산을 구현한 것입니다.
+
+구현 결과를 살펴보면 어떤 자료구조와 같다고 생각이 듭니다 바로.
+***스택*** 이 생각나네요. push() 연산과 동일하게 보여집니다. 
+그렇다면 이 LinkedList를 이용해서 노드의 가장 마지막값. 
+즉 tail 값만 빼올수 있다면 pop() 연산도 구현을 할 수 있습니다.
+
+
+
+
+
+
+### 이중 연결리스트 만들어보기

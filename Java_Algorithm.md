@@ -65,3 +65,120 @@ isSelected[] : 메모리 공간을 약간 더 쓰고 비교횟수를 줄인다�
 
 
 재귀의 파라미터는 결정요인이 되는것이 일반적임.
+
+
+### 5.Kruskal 알고리즘
+
+정점과 간선이 주어졌을때, 최소비용신장 그래프를 만드는 알고리즘입니다. Greedy 를 기반으로 구성되었으며 정점수(V)-1 만큼의 연산을 통해 그래프에서 최소비용신장 그래프를 도출할 수 있습니다.
+  
+
+```java 
+public class MST_kruskalTest {
+		static class Edge implements Comparable<Edge>	{
+			int from,to,weight;			
+			public Edge(int from, int to,int weight) {
+				super();
+				this.from=from;
+				this.to=to;
+				this.weight=weight;
+			}
+			@Override
+			public int compareTo(Edge o) {
+				// TODO Auto-generated method stub
+				return Integer.compare(this.weight, o.weight);
+			}			
+		}	
+		static int V,E;
+		static Edge[] edgeList;
+		static int[] parents;
+	public static void main(String[] args) throws IOException {
+		BufferedReader in =new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st=new StringTokenizer(in.readLine()," ");
+		V = Integer.parseInt(st.nextToken());
+		E = Integer.parseInt(st.nextToken());
+		edgeList=new Edge[E];
+		parents =new int[V];				
+		int from,to,weight;
+		for(int i=0;i<E;i++) {
+			st=new StringTokenizer(in.readLine(), " ");
+			from = Integer.parseInt(st.nextToken());
+			to = Integer.parseInt(st.nextToken());
+			weight = Integer.parseInt(st.nextToken());
+			edgeList[i] =new Edge(from,to,weight);
+		}
+		int answer=0;
+		int cnt=0;
+		Arrays.parallelSort(edgeList);
+		for(int i=0;i<edgeList.length;i++) {
+			if(unionSet(edgeList[i].from, edgeList[i].to)) {
+				answer+=edgeList[i].weight;
+				if(++cnt==V-1) break;
+			}
+		}
+		System.out.println(answer);		
+	}
+	
+	public void makeSet() {
+		for(int i=0;i<V;i++) {
+			parents[i]=i;
+		}
+	}
+	public static int findSet(int x) {
+		if(x==parents[x]) return x;
+		return parents[x]=findSet(parents[x]);
+	}
+	public static boolean unionSet(int x,int y) {
+		int xRoot = findSet(x);
+		int yRoot = findSet(y);
+		if(xRoot == yRoot) return false;	
+		parents[yRoot]=xRoot;
+		return true;
+	}
+}
+```
+
+### 6. Greedy 알고리즘
+
+- 최적해를 구하는 데 사용되는 근시안적인 방법.
+- 여러 결정중 한 순간 마다 그순간에 최적이라고 생각되는 것을 선택해 나가는 방식으로 최종적 해답에 도달한다.
+- 하지만 각 지역적인 결정에서는 최적이지만, 최종적 결과는 최적이라는 보장이 없다.
+- 즉, 순간순간의 최고의 선택이 결과적으로 최적의 결과가 될 수 있다고 믿고 구현하는 것이다.
+- 이를 확인하기 위해 반례를 잘 찾아야 한다
+
+#### Knapsack(배낭 짐싸기) 문제
+도둑은 부자들의 물건을 훔치기위해 창고에 침입해서 배낭에 담아올 계획이다.
+배낭은 담을수 있는 물건의 총 무게 W 가 정해져있고, 물건들은 각각 무게와 값이 정해져있다.
+
+도둑은 배낭이 수용 할 수 있는 무게를 초과하지 않으면서 값이 많이 나갈 수 있게끔 가방에 물건을 담아야한다. 어떻게 해야할까?
+|   | 무게 | 값 |
+|---|---|---|
+|물건1|5kg|50만원|
+|물건2|10kg|60만원|
+|물건3|20kg|140만원|
+
+1. 무게당 값이 가장 높은 순서로 담아본다?  
+
+|   | 무게 | 값 | 값/kg|
+|---|---|---|---|
+|물건1|5kg|50만원|10만원/kg|
+|물건2|10kg|60만원|6만원/kg|
+|물건3|20kg|140만원|7만원/kg|
+
+최적해를 구하기 어렵다. 
+
+2. 가장 비싼 순서와 가장 싼 순서대로 담아본다?
+
+이또한 최적해를 구하기 어렵다
+
+
+그럼 어떻게 처리해야할까?
+
+가방의 무게인 W의 무게를 넘지않는 모든 물건의 경우의 수를 찾아서 최적해의 후보를 뽑고 그중 가장 가치값이 최대인 방법을 선택한다. 
+
+이런 상황에서는 greedy가 맞지 않지만, 만약 greedy의 조건이 맞아 떨어지는 상황이라면 짧지만 완전탐색보다 훨씬 더 효율적인 방법으로 사용 해볼 수 있다.
+
+예를들어, 물건을 자를 수 있는 문제였다면 무게당 값을 재서 가장 최대로 비싼것부터 넣는다면 greedy의 조건이 충분히 적용되어 질 수 있다. 
+
+즉, 반레를 찾아야 하고 최적해를 도출 할 수 있을것 같을때 사용해야한다.
+
+ 

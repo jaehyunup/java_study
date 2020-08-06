@@ -244,6 +244,7 @@ public class simpleLinkedListTest {
 	}
 }
 ```
+
 ```
 출력결과 : 3 2 1
 ```
@@ -325,3 +326,79 @@ dfs는 Stack이나 재귀함수로 구현이 가능합니다.
 
 #### 인접 행렬
 정점의 개수를 V개라고 했을때 V*V 의 행렬을 이용해 그래프 정점간의 인접관계를 표현한 행렬.
+
+#### Kruskal 알고리즘
+정점과 간선이 주어졌을때, 최소비용신장 그래프를 만드는 알고리즘입니다. Greedy 를 기반으로 구성되었으며 정점수(V)-1 만큼의 연산을 통해 그래프에서 최소비용신장 그래프를 도출할 수 있습니다.
+
+'''java
+public class MST_kruskalTest {
+
+		static class Edge implements Comparable<Edge>	{
+			int from,to,weight;
+			
+			public Edge(int from, int to,int weight) {
+				super();
+				this.from=from;
+				this.to=to;
+				this.weight=weight;
+			}
+
+			@Override
+			public int compareTo(Edge o) {
+				// TODO Auto-generated method stub
+				return Integer.compare(this.weight, o.weight);
+			}			
+		}
+		
+		static int V,E;
+		static Edge[] edgeList;
+		static int[] parents;
+	public static void main(String[] args) throws IOException {
+		BufferedReader in =new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st=new StringTokenizer(in.readLine()," ");
+		V = Integer.parseInt(st.nextToken());
+		E = Integer.parseInt(st.nextToken());
+		edgeList=new Edge[E];
+		parents =new int[V];
+				
+		int from,to,weight;
+		for(int i=0;i<E;i++) {
+			st=new StringTokenizer(in.readLine(), " ");
+			from = Integer.parseInt(st.nextToken());
+			to = Integer.parseInt(st.nextToken());
+			weight = Integer.parseInt(st.nextToken());
+			edgeList[i] =new Edge(from,to,weight);
+		}
+		int answer=0;
+		int cnt=0;
+		Arrays.parallelSort(edgeList);
+		for(int i=0;i<edgeList.length;i++) {
+			if(unionSet(edgeList[i].from, edgeList[i].to)) {
+				answer+=edgeList[i].weight;
+				if(++cnt==V-1) break;
+			}
+		}
+		System.out.println(answer);
+		
+		
+	}
+	
+	public void makeSet() {
+		for(int i=0;i<V;i++) {
+			parents[i]=i;
+		}
+	}
+	public static int findSet(int x) {
+		if(x==parents[x]) return x;
+		return parents[x]=findSet(parents[x]);
+	}
+	public static boolean unionSet(int x,int y) {
+		int xRoot = findSet(x);
+		int yRoot = findSet(y);
+		if(xRoot == yRoot) return false;
+		
+		parents[yRoot]=xRoot;
+		return true;
+	}
+}
+```

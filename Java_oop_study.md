@@ -218,6 +218,30 @@ Object o = 123;
 Object o = Integer(123);
 ```
 
+#### 한가지 더 특별한 케이스
+```java
+class A{
+	a(){
+
+	}
+	info(){
+
+	}
+}
+class B extends A{
+	@Override
+	info(){
+
+	}
+}
+public static void main(String[] args){
+	A a=new B b();
+	a.a()
+	a.info();
+}
+```
+위와같이 선언했을때, 묵시적 형변환으로 부모클래스인 a의 메소드를 사용하게 되지만 만약 자식에서 오버라이드가 되어있다면? 오버라이드된 메소드를 사용한다!
+
 ### 8.인터페이스
 추상화의 꽃! 인터페이스입니다.
 인터페이스는 **mathods의 추상화**한것이고 class와 독립적인 개념으로 interface라고 이름을 지었다고 합니다.

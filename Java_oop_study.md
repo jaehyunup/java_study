@@ -1,4 +1,5 @@
  # OOP 란?
+ 
 한글로 객체지향 프로그래밍. 
 **데이터와 이를 처리하는 루틴을 하나의 독립된 객체로 동작하는 것을 지향하는 것을 말합니다.**
 
@@ -257,8 +258,10 @@ FolderblePhone과 nomalphone 두개 가장 큰 차이는 접히느냐?안접히�
 
 그렇게 했을때 가장 이상적인 상속관계는  
 
-부모 Phone  
-자식 folderblePhone,nomalPhone  
+분류|클래스 명
+---|---
+| 부모 | Phone  |
+| 자식 | folderblePhone,nomalPhone  |
 다음과 같아지겠습니다. 
 여기서 부모 클래스에 phone에 접히는 기능을 추가해버린다면? nomalPhone도 접히는 메소드를 받아버리고, 이에 아무행동을 하지않는것으로 재정의를 해야되겠죠?
 
@@ -279,3 +282,42 @@ B역시 A가 필요로 하는 모든것에 대해 자신의 method 의 모든것
 > java 8 버전부터 default 메소드가 추가되면서 기존에 추상 class를 통해 인터페이스의 바디를 구현했지만, 본래의 의미가 조금 퇴색되었다는 의견이 많고, 원래있던 추상 class의 역할도 애매해지게 되었습니다.
 
 
+
+### 9. Generic 제네릭
+
+Array의 선언을 보면 int[] 혹은 String[] 등으로 선언합니다. 이것은 무엇의 배열인지,어떤 자료형이 들어갈 배열인지 명확하게 나와있죠.
+
+하지만 ArrayList와 같은 Collection은 어떤 자료형을 가지는지 명확히 표현하지 않고 사용했었습니다.
+
+Java 1.5부터는 Generic '<>' 을 도입하여 class code 작성 시점에 임의의 타입 ('<T>')
+을 사용하도록 하고, 실제 class를 사용하는 code에서 <T>대신 실제 사용하는 타입을 사용 할 수 있도록 하였습니다.
+
+
+```java
+public class GenericContainer<T> {
+	private T obj;
+	public GenericContainer(){};
+	public GenericContainer(T t){
+		obj=t;
+	}
+	public T getObj(){
+		return obj;
+	}
+	public void setObj(T t){
+		obj;t;
+	}
+}
+
+public class GenericContainerTest{
+	public static void main(String[] args){
+		GenericContainer<Integer> gc1= new GenericContainer<>();
+		
+		GenericContainer<String> gc2= new GenericContainer<>();
+		
+		gc1.setObj(3); // 정상작동
+		gc2.setObj(3); // 에러
+	}
+}
+```
+
+즉 위와같이 제네릭을 통해 클래스 작성시에는 어떤 클래스를 사용하는지 아직도 모르지만, 적어도 해당 클래스를 사용하는 코드부분에는 명시적으로 작성해야 합니다.

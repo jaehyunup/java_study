@@ -321,3 +321,131 @@ public class GenericContainerTest{
 ```
 
 즉 위와같이 제네릭을 통해 클래스 작성시에는 어떤 클래스를 사용하는지 아직도 모르지만, 적어도 해당 클래스를 사용하는 코드부분에는 명시적으로 작성해야 합니다.
+
+
+### 10. 추상클래스
+
+#### 추상 abstract , 즉 구현이 안되어 있는 것 을 말한다.
+추상 클래스는 abstract 키워드를 통해 선언할 수 있으며, 구현은 본인이 하지않고, 자식클래스와 같이 상속관계에 있는 클래스가 직접 구현해서 사용 할 수 있게 만드는 방법이다. 
+
+abstract 키워드를 사용할 수 있는 곳은 다음과 같다
+분류|키워드 사용가능여부
+---|---
+클래스|가능
+메서드|가능
+변수|불가
+
+추상클래스는 객체생성이 불가능, 상속(자식클래스)에서의 구현을 이용해서 활용하여야 합니다. 
+
+이는 즉 추상클래스 객체변수는 New가 불가능 하다는 것을 말해요
+```java
+abstract class AbsSuper{
+}
+public class Test01 {
+	AbsSuper as =new AbsSuper();
+}
+```
+위와 같이 추상클래스인 AbsSuper는 객체생성 자체가 불가능 하다는 것입니다
+
+하지만 추상클래스를 상속받은 자식클래스는 객체변수로 선언될 수 있습니다.
+```java
+package com.ssafy.day08.abs;
+
+abstract class AbsSuper{
+}
+
+class AbsSub extends AbsSuper{
+	
+}
+public class Test01 {
+	/* AbsSuper as =new AbsSuper(); 와 같이 객체생성 불가능.*/
+	AbsSuper as=new AbsSub();
+}
+```
+
+예를들면 자바 컬렉션의 Queue는 직접선언이 안되고 LinkedList로 객체생성을 해서 사용하는 방식이 이런 상황의 적절한 예시로 보입니다.
+
+
+> ### 인터페이스랑 비슷한것 같은데, 왜 추상클래스가 존재할까요?  
+인터페이스는 완전한 추상화를 가지는 반면에, 추상클래스를 이용하면 일반메서드 + 추상메서드 형태로 사용이 가능합니다.
+
+
+
+
+추상메서드는 어떻게 선언이 되어질까요?
+앞서 말했듯이 추상메서드나 클래스는 구현이 불가능합니다.
+즉, 추상메서드를 선언할때는 다음과 같이 구현부 자체를 없애버려야 합니다.
+```java
+abstract void print();   // 선언가능
+abstract void print(){};   // 선언 불가 (바디가 있어서)
+```
+
+
+#### 추상클래스를 상속하는 자식 클래스가 반드시 처리해야 하는 일?
+반드시 추상 메서드를 오버라이딩하여 재정의 해야만 합니다. 
+
+추상메서드를 활용하는 예시를 보겠습니다.
+
+```java
+abstract class AbsSuper{
+	//abstract String name; 에러발생 : 변수와 함께 abstract 키워드를 사용 불가능 
+	String name = "AbsSuper";
+	public void call() {
+		System.out.println("Parrents Call()");
+	}
+//	public void print(); 에러발생: 메서드 바디 필요함(일반 메서드 이기 때문에)
+//  public abstract void print(){}; 에러발생 : 추상메서드인데 바디를 가지고있음.
+	public abstract void print();
+}
+
+class AbsSub extends AbsSuper{
+	String name = "AbsSub";
+	public AbsSub() {};
+	public void eat() {
+		System.out.println("Child eat()");
+	}
+	@Override
+	public void print() {
+		System.out.println("Child print()");
+		
+	}	
+}
+
+public class Test01 {
+	public static void main(String[] args) {
+		AbsSuper as=new AbsSub();
+		System.out.println(as.name);
+		as.call();
+		as.print();
+	}
+}
+```
+
+```
+출력결과 :
+AbsSuper
+Parrents Call()
+Child print()
+```
+
+위에서 클래스별 구조는 아래와 같습니다. 
+```
+AbsSuper 
+|-name  
+|-call()  
+|-print()
+```
+```
+AbsSub  
+|-name  
+|-eat()  
+|-print()  
+```
+
+AbsSuper 형태의 틀에 AbsSub 객체를 넣었습니다. (상속관계이기 때문에 가능)  
+하지만 런타임에 실행되는 틀 자체는 결국 AbsSuper 입니다.
+하지만 틀안에 들어간 객체인 자식클래스 내부적으로 부모클래스의 메서드나 추상메서드를 Override 했다면, Override된 메서드를 실행하게 됩니다.
+
+오버라이드 되지않는 변수와, call 메서드 같은경우 부모의 것을 그대로 사용하고, 추상메서드를 통해 강제적으로 오버라이드하였던 print()는 자식클래스의 것을 캐스팅하게 되었습니다. 
+
+

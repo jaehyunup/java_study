@@ -277,9 +277,152 @@ B역시 A가 필요로 하는 모든것에 대해 자신의 method 의 모든것
 
 이때 인터페이스를 사용하면 B는 자신의 code를 공개하지않고 A에게 메소드를 제공할 수 있습니다.
 
+##### 인터페이스 끼리도 상속이 가능합니다! 
 
-물론 인터페이스도 추상클래스를 통해 body를 구현할 수 있습니다. 
-> java 8 버전부터 default 메소드가 추가되면서 기존에 추상 class를 통해 인터페이스의 바디를 구현했지만, 본래의 의미가 조금 퇴색되었다는 의견이 많고, 원래있던 추상 class의 역할도 애매해지게 되었습니다.
+```java
+interface Inter01 {
+}
+
+interface Inter02 {
+}
+
+interface Inter03 extends Inter02 {
+}
+
+interface Inter04 extends Inter01, Inter02 {
+}
+
+class Parent01 {
+}
+
+class Parent02 {
+}
+
+class InterChild extends Parent01 implements Inter01, Inter02 {
+}
+
+public class Test01 {
+	public static void main(String[] args) {
+
+	}
+}
+
+```
+
+인터페이스에 선언되는 모든 변수는 상수로인식합니다.
+즉, public static final 키워드가 자동 추가됩니다
+
+인터페이스에 선언되는 메서드는 추상 메서드로 인식합니다.
+public abstract 키워드가 자동 추가 됩니다.
+
+```java
+interface ServerInfo {
+	/*public static final*/ String IP="192.168.0.110"; 
+}
+```
+즉 이런형태로 선언 되어 진다는 것입니다.
+자바에서 final 키워드가 붙으면? 상수가 되어 버립니다.
+
+아래에서 테스트 해보겠습니다
+
+```java
+interface ServerInfo {
+	/*public static final*/ String IP="192.168.0.110"; 
+	/*public abstract*/ void call();
+}
+public class Test02 {
+	public static void main(String[] args) {
+		System.out.println(ServerInfo.IP); // static 성질 확인
+		ServerInfo.IP="1223";
+	}
+}
+```
+
+```
+The final field ServerInfo.IP cannot be assigned
+```
+static 성질과 final 상수가 된것을 알수있고, 인터페이스에 선언된 void call() 메서드도 구현부가 없는데 에러가 나지않는 이유는, abstract 키워드를 묵시적으로 붙혀주기 때문이다.
+
+이렇게 되기 때문에, 만약 Interface를 구현하는 클래스에서 새로 메서드를 오버라이딩 할때 public을 붙혀주어야 합니다. (컴파일러단에서 interface에 선언된 메소드에 자동으로 public static 키워드가 붙어서 해석해주기 때문에)
+
+#### java8 버전부터 생긴 default와 static
+```java
+interface AIMachine {
+	void work();
+	void tell();
+}
+class KakaoAIMachine implements AIMachine{
+	@Override
+	public void work(){		
+	}
+	@Override
+	public void tell() {
+	}
+}
+
+class NaverAIMachine implements AIMachine{
+	@Override
+	public void work(){	
+	}
+	@Override
+	public void tell() {	
+	}
+	
+}
+```
+#### 시나리오
+카카오와 네이버가 걷고,대화할수있는 AI로봇을 만들었는데 카카오는 음악을 실행하는 music()이라는 행동을 추가하려고한다. 근데 네이버는 아직 음악을 실행하는 기능을 만들지 않았다.
+
+국내 기업들의 AIMachine 을 총괄하는 사람은 고민에 빠지게 되었다
+
+1. music()메서드의 추가를 위해 KakaoAIMachine 클래스에 별도의 메서드를 정의하다보면 AIMachine의 수가 아주많이 늘어났을때 관리가 불가능해 질 것이다.
+
+2. 그렇다고 인터페이스에서 선언해서 사용하자니 해당기능을 가지고있지 않은 클래스도 이를 구현해야하는 상황이다.
+
+기존에는 interface를 하나 더 추가해서 다중 implements 를 했겠지만 자바 8 버전 부터 추가된 default 기능과 static 기능으로 이런 부분들에대한 불편이 해소되었습니다.
+
+
+```java
+interface AIMachine {
+	void work();
+	void tell();
+	default void music() {
+		System.out.println("아직 지원되지않는 기능입니다");
+	}
+	static void common() {
+		System.out.println("공통으로 사용되는 기능 정의");
+	}
+}
+class KakaoAIMachine implements AIMachine{
+	@Override
+	public void work(){
+		
+	}
+	@Override
+	public void tell() {
+		
+	}
+	
+}
+
+class NaverAIMachine implements AIMachine{
+	@Override
+	public void work(){
+		
+	}
+	@Override
+	public void tell() {
+		
+	}	
+}
+public class Test04 {
+
+}
+```
+
+이제 담당자는, 공통기능과 새로 추가된 기능이있어도 default,static을 이용해 유연하게 대처할 수 있게 되었습니다.
+
+
 
 
 
@@ -367,7 +510,18 @@ public class Test01 {
 
 
 > ### 인터페이스랑 비슷한것 같은데, 왜 추상클래스가 존재할까요?  
+1. 인터페이스에서는 일반 메서드 선언이 불가능하다
 인터페이스는 완전한 추상화를 가지는 반면에, 추상클래스를 이용하면 일반메서드 + 추상메서드 형태로 사용이 가능합니다.
+
+2. 인터페이스는 다중 상속의 개념 지원
+한개의 클래스를 부모로 지정할수있는 extends와는 다르게 implements는 여러개의 인터페이스 구현이 가능합니다.
+
+관계| 상속or구현 형태
+---|---
+class -> class  | extends
+interface-> interface | extends
+class -> interface | implements
+interface -> class | 불가능
 
 
 
@@ -449,3 +603,9 @@ AbsSuper 형태의 틀에 AbsSub 객체를 넣었습니다. (상속관계이기 
 오버라이드 되지않는 변수와, call 메서드 같은경우 부모의 것을 그대로 사용하고, 추상메서드를 통해 강제적으로 오버라이드하였던 print()는 자식클래스의 것을 캐스팅하게 되었습니다. 
 
 
+> #### 근데 오버라이딩은 그냥 해도되는데 왜 굳이 추상메서드로 강제화 시키는 걸까?
+
+
+
+```
+```

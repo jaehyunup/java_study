@@ -74,7 +74,7 @@ public class Phone {
 **이중 static이 함께 선언된 SWversion** 은 무슨 의미일까요? 이를 알기위해서는 메모리 저장 영역에 대한 이야기가 필요합니다.
 
 ## - 메모리에는 어떻게 저장될까?
-![메모리](./img/instance_memory.png)
+![메모리](../img/instance_memory.png)
 
 > 함수코드는 Method Area에, Stack에는 런타임에 호출되어지는 메소드가, 실제로 선언과 호출에 의해 발생하는 메모리 할당은 heap에 객체 별로 독립적으로.
 
@@ -651,6 +651,8 @@ class Top{
   
 
 프로그램을 만들어보자.
+
+### [완성된 프로젝트 ver.1](https://github.com/jaehyunup/java_study/tree/master/src/OOP/01_ProductSimulator/ver1)
 
 
 

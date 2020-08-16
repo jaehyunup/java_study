@@ -656,3 +656,52 @@ class Top{
 
 
 
+### Java 파일 입출력(I/O)
+
+자바 입출력은 버퍼를 쓰는것(Bufferd...)과 바로읽는것(InputStream..) 이 있습니다.
+파일로 따졌을때, 버퍼를 사용한다면 디스크접근이 한번이고. 사용하지않는다면 디스크 접근을 매번 해야합니다.
+
+파일처리나,운영체제를 배운 사람은 디스크는 메모리접근에 비해 상대적으로 엄청나게 느리다는 것을 알것입니다.
+
+그럼 도대체 두개가 얼마나 큰차이가 있길래 이렇게 강조하는것일까요?
+
+```java
+public class BufferPerformanceTest {
+	public static void main(String[] args) {
+		
+		File src = new File("c:/Windows/explorer.exe");
+		File target = new File("c:/Temp/copied_explorer.exe");
+		
+		try (FileInputStream fi = new FileInputStream(src);
+			 FileOutputStream fo = new FileOutputStream(target);
+			 BufferedInputStream bi = new BufferedInputStream(fi);
+			 BufferedOutputStream bo = new BufferedOutputStream(fo);) {
+			
+			 copy("FileInputStream", fi, fo);
+			 copy("BufferdInputStream", bi, bo);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void copy(String type, InputStream input, OutputStream output) throws IOException {
+		long start = System.nanoTime();
+		byte[] cart = new byte[1024];
+		int read = -1;
+		while ((read = input.read(cart)) > 0) {
+			output.write(cart, 0, read);
+		}
+		long end = System.nanoTime();
+		System.out.println(type + ", 소요 시간: " + (end - start) + "ns");
+	}
+}
+```
+
+```
+출력결과 :
+FileInputStream, 소요 시간: 19264500ns
+BufferdInputStream, 소요 시간: 14100ns
+```
+
+ㄷㄷ 이정도나 차이날줄은 몰랐다.

@@ -741,6 +741,7 @@ Server
 - 접속 하면 해당 클라이언트 소켓의 OutputStream 핸들링
 - outputStreamWriter을 통해 stream 생성하여 작성하고 보내기
 
+### simple server-client 구현해보기
 
 ```java
 /*서버 */

@@ -705,3 +705,38 @@ BufferdInputStream, 소요 시간: 14100ns
 ```
 
 ㄷㄷ 이정도나 차이날줄은 몰랐다.
+
+
+
+### 13. 소켓통신
+
+##### UDP 
+- 데이터 통신 방식으로, 송신측에서 데이터를 전송하고 수신측에서 받고 별도의 데이터 신뢰성 확인 행위를 하지않는 방식.    
+Java에서는 Datagramsocket, DatagramPacket 을 이용한다.
+
+
+##### TCP  
+- 데이터를 전달하고 얼마나 전달됬는지 확인하는 등의 확인과정을 통해(3-handShake) 신뢰도가 높은 통신방식으로 Java에서는 Socket을 이용하여 사용한다.
+Http 프로토콜이 TCP 기반으로 정의되었다.
+
+
+ServerSocket - 서버단의 소켓  
+Socket - 클라이언트의 소켓
+
+
+
+
+#### 간단한 소켓프로그램으로 서버에서 보내는 문자를 클라이언트에 받는 프로그램을 구성할때의 서버-클라이언트 요구사항
+
+Client
+- 서버(host)의 IP와 포트번호
+- socket 객체 생성(host,ip)
+- socket 객체에서 inputStream 핸들링하기
+- InputStreamReader를 통해 inputStream(byte data)를 읽고, 이를 BufferedReader 로 체이닝하여 사용.
+- 그다음 BufferedReader를 이용해 data read하기. 
+
+Server
+- 서버소켓 생성(포트번호 기입)
+- 클라이언트 소켓이 접속할때까지 대기
+- 접속 하면 해당 클라이언트 소켓의 OutputStream 핸들링
+- outputStreamWriter을 통해 stream 생성하여 작성하고 보내기

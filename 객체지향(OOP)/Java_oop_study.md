@@ -740,3 +740,68 @@ Server
 - 클라이언트 소켓이 접속할때까지 대기
 - 접속 하면 해당 클라이언트 소켓의 OutputStream 핸들링
 - outputStreamWriter을 통해 stream 생성하여 작성하고 보내기
+
+
+```java
+/*서버 */
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class NetworkSimpleServer {
+
+	public static void main(String[] args) {
+		int port = 5100;
+		
+		try (ServerSocket serverSocket = new ServerSocket(port)) {
+			
+			System.out.println("NetworkSimpleServer Started");
+			
+			while (true) {
+				Socket socket = serverSocket.accept();
+				OutputStream output = socket.getOutputStream();
+				PrintWriter writer = new PrintWriter(output, true);
+				writer.println("Server : Hello Client!");
+			}
+			
+		 } catch (IOException e) {
+			 System.out.println("NetworkSimpleServer exception: " + e.getMessage());
+			 e.printStackTrace();
+		 }
+		
+		 System.out.println("NetworkSimpleServer Ended");
+	}
+}
+```
+
+```java
+/*client*/
+import java.io.BufferedReader;
+	import java.io.IOException;
+	import java.io.InputStream;
+	import java.io.InputStreamReader;
+	import java.net.Socket;
+	
+	public class NetworkSimpleClient {
+	
+		public static void main(String[] args) {
+			String host = "localhost";
+			int port = 5100;
+			
+			try ( Socket socket = new Socket(host, port) ) {
+				
+				InputStream input = socket.getInputStream();
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+	 
+	            String message = reader.readLine();
+	            System.out.println(message);
+				
+			 } catch ( IOException e) {
+				 System.out.println("NetworkSimpleClient exception: " + e.getMessage());
+				 e.printStackTrace();
+			 }
+		}
+	}
+```

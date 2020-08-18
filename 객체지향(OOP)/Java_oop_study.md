@@ -806,3 +806,68 @@ import java.io.BufferedReader;
 		}
 	}
 ```
+
+
+
+이 프로그램은 하나의 서버에 하나의 클라이언트, 즉 일대 일 통신밖에 되지않는다.
+
+다대일. 즉 , 한 서버에 여러클라이언트가 접속하는 일반적인 구조의 서버-클라이언트는 어떻게 만들수있을까? 바로 멀티쓰레딩이다.
+
+
+#### 15. 쓰레드
+
+메모리에 할당된 프로세스의 흐름을 주관하는 단위. 우리의 모든 코드들은 런타임시에 알게모르게 이미 "메인 쓰레드"에서 돌아가고 있다. 
+
+하지만 쓰레드를 한개 더 사용한다면, 2개의 프로세스를 동시에 처리할 수 있다. 
+
+> *손을 한개쓰는거보단 두개쓰는게 낫다!*
+
+
+그렇다면 쓰레드는 어떻게 구현할까?
+2가지 방법이 있다.
+
+1. Thread를 상속받는 새로운 클래스를 만들어 run() 메소드를 오버라이딩 하기.
+2. Runnable 인터페이스를 implements 하여 run() 메소드를 오버라이딩. 
+
+
+```java
+/* 1번 방식 */
+Class myThread extends Thread{
+	@Override
+	public void run(){
+		 /*쓰레드가 할 동작 정의*/
+	}
+}
+
+Class main implements Runnable{
+	public static void main(String[] args){
+		Thread t=new MyThread();
+		t.start();
+	}
+	
+}
+```
+
+```java
+/* 2번 방식 */
+Class myRun implements Runnable{
+	@Override
+	publoc void run(){
+		 /*쓰레드가 할 동작 정의*/
+	}
+}
+
+Class main implements Runnable{
+	public static void main(String[] args){
+		Thread t=new Thread(new myRun());
+		t.start();
+	}
+	
+}
+```
+
+
+
+
+
+

@@ -868,6 +868,125 @@ Class main implements Runnable{
 
 
 
+쓰레드는 run 메소드를 직접호출하는것이 아니라, start 메소드를 통해 간접적인 run 메소드의 호출을 발생시켜야 정상동작한다.
+
+멀티쓰레딩 프로그램을 작성할때, 특정 쓰레드를 기다리거나 자원이 다 사용될때까지 기다릴 필요가 있다. 그럴때에는 다음과같은 메소드를 이용한다.  
+
+메소드|내용
+---|---
+Thread.join()| 해당 쓰레드가 종료되기를 기다린다.
+Thread.wait()| 자원을 기다린다
+Thread.notify()|대기하고있는 쓰레드에게 다시 작업하라고 알린다
+Thread.interrupt()| interruptedException를 발생시킨다
 
 
 
+쓰레드의 상태는 어떤것이 있을까 ?
+
+
+상태|설명
+---|---
+NEW|스레드 객체가 생성된 시점
+RUNNABLE| 객체가 생성되고, 실행준비가 완료된 상태
+WAITING|다른 스레드가 notify할때까지 대기하는 상태
+TIMED_WAITNH| 주어진 시간동안 기다리는 상태
+BLOCKED | 사용하고자 하는 자원의 lock이 풀릴때까지 대기하는 상태
+TERMINATED| 실행을 끝마친 상태
+
+
+
+간략하게 어떤 상태인지 테스트해보자. 
+
+```java
+package com.ssafy.day0819;
+
+public class Test01 {
+	public static void main(String[] args) {
+		System.out.println("쓰레드상태확인");
+		Thread t=new Thread() {
+			@Override
+			public void run() {
+				System.out.println("쓰레드 실행 끝남");
+			}
+		};
+		
+		System.out.println(t.getState().name());
+		
+		t.start();
+		System.out.println(t.getState().name());
+		
+		try {
+			Thread.sleep(2000);
+		}
+		catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(t.getState().name());
+		
+		try {
+			t.join();
+		}catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(t.getState().name());
+		
+	}
+	
+}
+
+```
+
+```
+실행결과:
+쓰레드상태확인
+NEW
+RUNNABLE
+쓰레드 실행 끝남
+TERMINATED
+TERMINATED
+```
+
+join과 wait는 직접 사용해보는것으로.
+
+
+
+#### simple horse game
+```java
+import java.util.Random;
+
+class Horse extends Thread{
+	Horse(String name){
+		super(name);
+	}
+	@Override
+	public void run() {
+		Random r =new Random();
+		int distance= 0;
+		while(true) {
+			distance+=r.nextInt(90)+11;
+			if(distance > 10000) return ;			
+			System.out.println(this.getName()+"말 :"+(distance/100)+ "m 뛰고있음");
+			try {
+				Thread.sleep(100);
+			}
+			catch(Exception e) {}			
+		}
+	}		
+}
+
+public class Test02 {
+	public static void main(String[] args) {
+		
+		Horse h1=new Horse("1번");
+		Horse h2=new Horse("2번");
+		Horse h3=new Horse("3번");
+		Horse h4=new Horse("4번");
+		System.out.println("경주를 시작합니다.");
+		h1.start();h2.start();h3.start();h4.start();
+		try{h1.join();h2.join();h3.join();h4.join();}
+		catch(Exception e){e.printStackTrace();}
+		System.out.println("경기가 종료되었습니다.");
+	}
+	
+}
+```

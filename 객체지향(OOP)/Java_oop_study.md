@@ -990,3 +990,115 @@ public class Test02 {
 	
 }
 ```
+
+
+
+### 16. JDBC 커넥션풀 구현해보기
+
+jdbc를 사용하면서 간단한 커넥션 풀을 구현해보려고 합니다.
+
+3개의 커넥션을 유지하고, 필요시에 커넥션을 넘겨주고 반환시 다시 커넥션을 유지하는 형태의 간단한 커넥션 풀입니다.
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ConnectionPool {
+	private static List<Connection> free = new ArrayList<>();
+	private static List<Connection> used = new ArrayList<>();
+	private static final int INIT_CNT = 3;
+
+	/* 클래스가 로딩되는 시점에 딱 한번 실행되는 static block. */
+	static {
+		try {
+		for (int i = 0; i < INIT_CNT; i++) {
+			free.add(DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/corona_db?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8","ssafy","ssafy"));
+			System.out.println((i+1)+" 개의 커넥션 생성");
+			}
+		}catch(SQLException e) {
+			System.out.println("DB 커넥션 초기생성중 에러 발생");
+			e.printStackTrace();
+		}
+	}
+	
+	/* 생성된 커넥션을 넘겨주는 메소드*/
+	public static Connection getConnection() throws Exception{
+		if(free.isEmpty()) {
+			throw new Exception("사용할 수 있는 커넥션이 없습니다");
+		}
+		Connection con =free.remove(0);
+		used.add(con);
+		Thread.sleep(1000);
+		return con;
+	}
+	
+	/* 커넥션 반환하는 메소드*/
+	public static Connection releaseConnection(Connection con) throws Exception{
+		if(con==null) {
+			throw new Exception("이미 릴리즈된 커넥션입니다.");
+		}
+		Connection decon=used.remove(used.indexOf(con));
+		free.add(decon);
+		System.out.println(decon+" 이 릴리즈 되었습니다");
+		Thread.sleep(1000);
+		return con;
+	}
+}
+```
+
+```java
+import java.sql.Connection;
+
+public class Test01 {
+	public static void main(String[] args) {
+		try {
+			for (int i = 0; i < 10; i++) {
+				Connection con=ConnectionPool.getConnection();
+				System.out.println(con);
+				ConnectionPool.releaseConnection(con);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+```
+
+```
+출력결과:
+1 개의 커넥션 생성
+2 개의 커넥션 생성
+3 개의 커넥션 생성
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+
+```
+3개단위로 같은객체를 다시 던져주는것을 알수있다. used,free 리스트를 이용하여 커넥션풀을 간단히 구현할 수 있습니다.
+
+실제 커넥션풀 구현시에는 싱글턴 패턴 등등 훨씬 더 많은 요구사항이 있습니다.
+
+
+## 17. 유지보수가 가능한 가상 게시판 만들어보기
+

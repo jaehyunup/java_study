@@ -868,6 +868,237 @@ Class main implements Runnable{
 
 
 
+쓰레드는 run 메소드를 직접호출하는것이 아니라, start 메소드를 통해 간접적인 run 메소드의 호출을 발생시켜야 정상동작한다.
+
+멀티쓰레딩 프로그램을 작성할때, 특정 쓰레드를 기다리거나 자원이 다 사용될때까지 기다릴 필요가 있다. 그럴때에는 다음과같은 메소드를 이용한다.  
+
+메소드|내용
+---|---
+Thread.join()| 해당 쓰레드가 종료되기를 기다린다.
+Thread.wait()| 자원을 기다린다
+Thread.notify()|대기하고있는 쓰레드에게 다시 작업하라고 알린다
+Thread.interrupt()| interruptedException를 발생시킨다
 
 
+
+쓰레드의 상태는 어떤것이 있을까 ?
+
+
+상태|설명
+---|---
+NEW|스레드 객체가 생성된 시점
+RUNNABLE| 객체가 생성되고, 실행준비가 완료된 상태
+WAITING|다른 스레드가 notify할때까지 대기하는 상태
+TIMED_WAITNH| 주어진 시간동안 기다리는 상태
+BLOCKED | 사용하고자 하는 자원의 lock이 풀릴때까지 대기하는 상태
+TERMINATED| 실행을 끝마친 상태
+
+
+
+간략하게 어떤 상태인지 테스트해보자. 
+
+```java
+package com.ssafy.day0819;
+
+public class Test01 {
+	public static void main(String[] args) {
+		System.out.println("쓰레드상태확인");
+		Thread t=new Thread() {
+			@Override
+			public void run() {
+				System.out.println("쓰레드 실행 끝남");
+			}
+		};
+		
+		System.out.println(t.getState().name());
+		
+		t.start();
+		System.out.println(t.getState().name());
+		
+		try {
+			Thread.sleep(2000);
+		}
+		catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(t.getState().name());
+		
+		try {
+			t.join();
+		}catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(t.getState().name());
+		
+	}
+	
+}
+
+```
+
+```
+실행결과:
+쓰레드상태확인
+NEW
+RUNNABLE
+쓰레드 실행 끝남
+TERMINATED
+TERMINATED
+```
+
+join과 wait는 직접 사용해보는것으로.
+
+
+
+#### simple horse game
+```java
+import java.util.Random;
+
+class Horse extends Thread{
+	Horse(String name){
+		super(name);
+	}
+	@Override
+	public void run() {
+		Random r =new Random();
+		int distance= 0;
+		while(true) {
+			distance+=r.nextInt(90)+11;
+			if(distance > 10000) return ;			
+			System.out.println(this.getName()+"말 :"+(distance/100)+ "m 뛰고있음");
+			try {
+				Thread.sleep(100);
+			}
+			catch(Exception e) {}			
+		}
+	}		
+}
+
+public class Test02 {
+	public static void main(String[] args) {
+		
+		Horse h1=new Horse("1번");
+		Horse h2=new Horse("2번");
+		Horse h3=new Horse("3번");
+		Horse h4=new Horse("4번");
+		System.out.println("경주를 시작합니다.");
+		h1.start();h2.start();h3.start();h4.start();
+		try{h1.join();h2.join();h3.join();h4.join();}
+		catch(Exception e){e.printStackTrace();}
+		System.out.println("경기가 종료되었습니다.");
+	}
+	
+}
+```
+
+
+
+### 16. JDBC 커넥션풀 구현해보기
+
+jdbc를 사용하면서 간단한 커넥션 풀을 구현해보려고 합니다.
+
+3개의 커넥션을 유지하고, 필요시에 커넥션을 넘겨주고 반환시 다시 커넥션을 유지하는 형태의 간단한 커넥션 풀입니다.
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ConnectionPool {
+	private static List<Connection> free = new ArrayList<>();
+	private static List<Connection> used = new ArrayList<>();
+	private static final int INIT_CNT = 3;
+
+	/* 클래스가 로딩되는 시점에 딱 한번 실행되는 static block. */
+	static {
+		try {
+		for (int i = 0; i < INIT_CNT; i++) {
+			free.add(DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/corona_db?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8","ssafy","ssafy"));
+			System.out.println((i+1)+" 개의 커넥션 생성");
+			}
+		}catch(SQLException e) {
+			System.out.println("DB 커넥션 초기생성중 에러 발생");
+			e.printStackTrace();
+		}
+	}
+	
+	/* 생성된 커넥션을 넘겨주는 메소드*/
+	public static Connection getConnection() throws Exception{
+		if(free.isEmpty()) {
+			throw new Exception("사용할 수 있는 커넥션이 없습니다");
+		}
+		Connection con =free.remove(0);
+		used.add(con);
+		Thread.sleep(1000);
+		return con;
+	}
+	
+	/* 커넥션 반환하는 메소드*/
+	public static Connection releaseConnection(Connection con) throws Exception{
+		if(con==null) {
+			throw new Exception("이미 릴리즈된 커넥션입니다.");
+		}
+		Connection decon=used.remove(used.indexOf(con));
+		free.add(decon);
+		System.out.println(decon+" 이 릴리즈 되었습니다");
+		Thread.sleep(1000);
+		return con;
+	}
+}
+```
+
+```java
+import java.sql.Connection;
+
+public class Test01 {
+	public static void main(String[] args) {
+		try {
+			for (int i = 0; i < 10; i++) {
+				Connection con=ConnectionPool.getConnection();
+				System.out.println(con);
+				ConnectionPool.releaseConnection(con);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+```
+
+```
+출력결과:
+1 개의 커넥션 생성
+2 개의 커넥션 생성
+3 개의 커넥션 생성
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8
+com.mysql.cj.jdbc.ConnectionImpl@d8355a8 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b
+com.mysql.cj.jdbc.ConnectionImpl@59fa1d9b 이 릴리즈 되었습니다
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67
+com.mysql.cj.jdbc.ConnectionImpl@46d56d67 이 릴리즈 되었습니다
+
+```
+3개단위로 같은객체를 다시 던져주는것을 알수있다. used,free 리스트를 이용하여 커넥션풀을 간단히 구현할 수 있습니다.
+
+실제 커넥션풀 구현시에는 싱글턴 패턴 등등 훨씬 더 많은 요구사항이 있습니다.
+
+
+## 17. 유지보수가 가능한 가상 게시판 만들어보기
 

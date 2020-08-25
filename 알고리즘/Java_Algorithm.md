@@ -184,6 +184,44 @@ public class MST_kruskalTest {
 그니까 머리좋은사람은 빨리찾는다 이말인가 --;; 슬픔
 
  #### 7. nextPermutation
-사전순으로 정렬해서, 특정 값을 찾아낼때 자주 이용된다(7자리의 문자열 에서 4번째 자리가 5인 수중에 가장 큰수 구하기) 뭐 이런것들? 자리수가 너무많다면 완탐돌리기 부담이다. 이럴때 nextPermutation을 쓰면 좋다. 
+사전순으로 정렬해서, 특정 값을 찾아낼때 자주 이용된다(7자리의 문자열 에서 4번째 자리가 5인 수중에 가장 큰수 구하기) 뭐 이런것들? 자리수가 너무많다면 완탐돌리기 부담이다. 이럴때 nextPermutation을 쓰면 좋다. 조합을 구현하는 방법중 하나지만 완전한 조합을 구할때는 재귀와 방문배열을 이용하여 구현하는것이 더 좋다.
 
 
+
+
+### 8. BinalyCounting
+비트를 이용해서 부분집합을 만들어 낼 수 있는 방법.
+
+```java
+import java.util.Scanner;
+
+public class BinaryCountingTest {
+	/* 비트를 이용해서 만들어내는 부분집합*/
+	static int N;
+	static int[] numbers;
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+		N = sc.nextInt();
+		numbers = new int[N];
+		for (int i = 0; i < N; i++) {
+			numbers[i]=sc.nextInt();
+		}
+		int caseCount = 1 << N;
+		generateSubset(caseCount);
+	}
+	
+	private static void generateSubset(int caseCount) {
+		for (int flag = 0; flag < caseCount; flag++) {
+			// flag의 각 비트자리를 확인하여 원소 선택 유/무를 판단한다.
+			for (int j = 0; j < N; j++) {
+				if ((flag & (1<<j)) !=0) { // flag와 1을 j만큼 shift 한것이 0이 아니면? 같은 자리수에 해당한다는것이다.
+					System.out.print(numbers[j]+" ");
+				}
+			}
+			System.out.println();
+		}
+	}
+}
+```
+
+N의 개수만큼 1에서 left shift 한 값은 모든 부분집합의 개수와 같게 되는것을 기반으로 비트를 이용해 만들어진 알고리즘이다. 

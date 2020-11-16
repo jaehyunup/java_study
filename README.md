@@ -2,7 +2,7 @@
 
 ### :one: 개인공부 (2020-07 ~ 2020.09)
 
-- 오랜만에 다시잡은 자바 개념 정리 다시하고 알고리즘,자료구조, OOP 다시 익히기.
+- 자바 기초 다시 정리하고 더 확실히 알기. 알고리즘,자료구조, OOP 공부
 
 ### :two: 백기선님의 자바 스터디 참여 (2020-11 ~ ing)
 <img src="https://github.com/jaehyunup/java_study/blob/master/20.11-ing/img/studyhalle.jpg?raw=true" width="60%">
